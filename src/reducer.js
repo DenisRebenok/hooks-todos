@@ -4,6 +4,11 @@ export default function reducer(state, action) {
   const { type, payload } = action;
   const { todos } = state;
   switch (type) {
+    case 'GET_TODOS':
+      return {
+        ...state,
+        todos: payload
+      };
     case 'ADD_TODO':
       if (!payload || todos.findIndex(t => t.text === payload) > -1)
         return state;
