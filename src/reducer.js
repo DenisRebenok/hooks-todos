@@ -1,22 +1,24 @@
 import uuidv4 from 'uuid/v4';
 
 export default function reducer(state, action) {
-  switch (action.type) {
+  const { type, payload } = action;
+  const { todos } = state;
+  switch (type) {
     case 'ADD_TODO':
+      if (!payload || todos.findIndex(t => t.text === payload) > -1)
+        return state;
       const newTodo = {
         id: uuidv4(),
-        text: action.payload,
+        text: payload,
         complete: false
       };
       return {
         ...state,
-        todos: [...state.todos, newTodo]
+        todos: [...todos, newTodo]
       };
     case 'TOGGLE_TODO':
-      const toggleTodos = state.todos.map(t =>
-        t.id === action.payload.id
-          ? { ...action.payload, complete: !action.payload.complete }
-          : t
+      const toggleTodos = todos.map(t =>
+        t.id === payload.id ? { ...payload, complete: !payload.complete } : t
       );
       return {
         ...state,
@@ -25,17 +27,19 @@ export default function reducer(state, action) {
     case 'SET_CURRENT_TODO':
       return {
         ...state,
-        currentTodo: action.payload
+        currentTodo: payload
       };
     case 'UPDATE_TODO':
-      const updatedTodo = { ...state.currentTodo, text: action.payload };
-      const updatedTodoIndex = state.todos.findIndex(
+      if (!payload || todos.findIndex(t => t.text === payload) > -1)
+        return state;
+      const updatedTodo = { ...state.currentTodo, text: payload };
+      const updatedTodoIndex = todos.findIndex(
         t => t.id === state.currentTodo.id
       );
       const updatedTodos = [
-        ...state.todos.slice(0, updatedTodoIndex),
+        ...todos.slice(0, updatedTodoIndex),
         updatedTodo,
-        ...state.todos.slice(updatedTodoIndex + 1)
+        ...todos.slice(updatedTodoIndex + 1)
       ];
       return {
         ...state,
@@ -43,9 +47,9 @@ export default function reducer(state, action) {
         todos: updatedTodos
       };
     case 'REMOVE_TODO':
-      const newTodos = state.todos.filter(t => t.id !== action.payload.id);
+      const newTodos = todos.filter(t => t.id !== payload.id);
       const isRemovedTodo =
-        state.currentTodo.id === action.payload.id ? {} : state.currentTodo;
+        state.currentTodo.id === payload.id ? {} : state.currentTodo;
       return {
         ...state,
         currentTodo: isRemovedTodo,
