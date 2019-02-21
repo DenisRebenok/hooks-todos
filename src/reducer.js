@@ -10,6 +10,12 @@ export default function reducer(state, action) {
         ...state,
         todos: toggleTodos
       };
+    case 'REMOVE_TODO':
+      const newTodos = state.todos.filter(t => t.id !== action.payload.id);
+      return {
+        ...state,
+        todos: newTodos
+      };
     default:
       return state;
   }
