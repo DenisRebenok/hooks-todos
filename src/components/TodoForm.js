@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+import uuidv4 from 'uuid/v4';
 import TodosContext from '../context';
 
 export default function TodoForm() {
@@ -12,10 +14,29 @@ export default function TodoForm() {
     setTodo(currentTodo.text ? currentTodo.text : '');
   }, [currentTodo.id]);
 
-  const handleSubmit = event => {
+  const handleSubmit = async event => {
     event.preventDefault();
-    const actionType = currentTodo.text ? 'UPDATE_TODO' : 'ADD_TODO';
-    dispatch({ type: actionType, payload: todo });
+    // const actionType = currentTodo.text ? 'UPDATE_TODO' : 'ADD_TODO';
+    if (todo === '' || currentTodo.text === todo) {
+      setTodo('');
+      return false;
+    }
+    //   return state;
+    if (currentTodo.text) {
+      dispatch({ type: 'UPDATE_TODO', payload: todo });
+    } else {
+      const response = await axios.post(
+        'https://todos2-1e502.firebaseio.com/todos.json',
+        {
+          id: uuidv4(),
+          text: todo,
+          complete: false
+        }
+      );
+      console.log(response);
+      dispatch({ type: 'ADD_TODO', payload: todo });
+    }
+
     setTodo('');
   };
   return (

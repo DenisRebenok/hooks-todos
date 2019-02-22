@@ -2,27 +2,35 @@ import uuidv4 from 'uuid/v4';
 
 export default function reducer(state, action) {
   const { type, payload } = action;
-  const { todos } = state;
   switch (type) {
     case 'GET_TODOS':
+      const todos = [];
+      for (const key in payload) {
+        todos.push({
+          complete: payload[key].complete,
+          id: payload[key].id,
+          text: payload[key].text,
+          uid: key
+        });
+      }
+      console.log(todos);
       return {
         ...state,
-        todos: payload
+        todos: todos
       };
     case 'ADD_TODO':
-      if (!payload || todos.findIndex(t => t.text === payload) > -1)
-        return state;
-      const newTodo = {
-        id: uuidv4(),
-        text: payload,
-        complete: false
-      };
+      // if (!payload || todos.findIndex(t => t.text === payload) > -1)
+      //   return state;
       return {
         ...state,
-        todos: [...todos, newTodo]
+        todos: [
+          ...state.todos,
+          { complete: false, id: uuidv4(), text: payload }
+        ]
       };
     case 'TOGGLE_TODO':
-      const toggleTodos = todos.map(t =>
+      console.log(payload);
+      const toggleTodos = state.todos.map(t =>
         t.id === payload.id ? { ...payload, complete: !payload.complete } : t
       );
       return {
@@ -35,16 +43,16 @@ export default function reducer(state, action) {
         currentTodo: payload
       };
     case 'UPDATE_TODO':
-      if (!payload || todos.findIndex(t => t.text === payload) > -1)
+      if (!payload || state.todos.findIndex(t => t.text === payload) > -1)
         return state;
       const updatedTodo = { ...state.currentTodo, text: payload };
-      const updatedTodoIndex = todos.findIndex(
+      const updatedTodoIndex = state.todos.findIndex(
         t => t.id === state.currentTodo.id
       );
       const updatedTodos = [
-        ...todos.slice(0, updatedTodoIndex),
+        ...state.todos.slice(0, updatedTodoIndex),
         updatedTodo,
-        ...todos.slice(updatedTodoIndex + 1)
+        ...state.todos.slice(updatedTodoIndex + 1)
       ];
       return {
         ...state,
@@ -52,7 +60,7 @@ export default function reducer(state, action) {
         todos: updatedTodos
       };
     case 'REMOVE_TODO':
-      const newTodos = todos.filter(t => t.id !== payload.id);
+      const newTodos = state.todos.filter(t => t.id !== payload.id);
       const isRemovedTodo =
         state.currentTodo.id === payload.id ? {} : state.currentTodo;
       return {
