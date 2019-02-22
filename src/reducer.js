@@ -42,9 +42,9 @@ export default function reducer(state, action) {
         currentTodo: payload
       };
     case 'UPDATE_TODO':
-      if (!payload || state.todos.findIndex(t => t.text === payload) > -1)
-        return state;
-      const updatedTodo = { ...state.currentTodo, text: payload };
+      // if (!payload || state.todos.findIndex(t => t.text === payload) > -1)
+      //   return state;
+      const updatedTodo = { ...payload };
       const updatedTodoIndex = state.todos.findIndex(
         t => t.id === state.currentTodo.id
       );

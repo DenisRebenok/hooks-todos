@@ -23,7 +23,11 @@ export default function TodoForm() {
     }
     //   return state;
     if (currentTodo.text) {
-      dispatch({ type: 'UPDATE_TODO', payload: todo });
+      const response = await axios.patch(
+        `https://todos2-1e502.firebaseio.com/todos/${currentTodo.uid}.json`,
+        { text: todo }
+      );
+      dispatch({ type: 'UPDATE_TODO', payload: response.data });
     } else {
       const response = await axios.post(
         'https://todos2-1e502.firebaseio.com/todos.json',
