@@ -19,9 +19,17 @@ export default function TodoList() {
               key={todo.id}
             >
               <span
-                onDoubleClick={() =>
-                  dispatch({ type: 'TOGGLE_TODO', payload: todo })
-                }
+                onDoubleClick={async () => {
+                  // console.log(`axios.patch, todo.uid: ${todo.uid}`);
+                  await axios.patch(
+                    `https://todos2-1e502.firebaseio.com/todos/${
+                      todo.uid
+                    }.json`,
+                    { complete: !todo.complete }
+                  );
+                  dispatch({ type: 'TOGGLE_TODO', payload: todo });
+                  // console.log(`response.data: ${response.data}`);
+                }}
                 className={`flex-1 ml-12 cursor-pointer ${todo.complete &&
                   'line-through text-grey-darkest'}`}
               >

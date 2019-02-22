@@ -13,7 +13,7 @@ export default function reducer(state, action) {
           uid: key
         });
       }
-      console.log(todos);
+      // console.log(todos);
       return {
         ...state,
         todos: todos
@@ -29,7 +29,6 @@ export default function reducer(state, action) {
         ]
       };
     case 'TOGGLE_TODO':
-      console.log(payload);
       const toggleTodos = state.todos.map(t =>
         t.id === payload.id ? { ...payload, complete: !payload.complete } : t
       );
